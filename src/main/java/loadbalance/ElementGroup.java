@@ -4,11 +4,7 @@ public class ElementGroup {
 
     private static final String DEFAULT_GROUP_NAME = "default";
 
-    public static ElementGroup DEFAULT_GROUP;
-
-    static {
-        DEFAULT_GROUP = new ElementGroup(DEFAULT_GROUP_NAME);
-    }
+    public static ElementGroup DEFAULT_GROUP = new ElementGroup(DEFAULT_GROUP_NAME);
 
     private String name;
 
