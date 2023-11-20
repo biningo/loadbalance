@@ -15,4 +15,9 @@ public abstract class AbstractCommonBalancer implements CommonBalancer {
     @Override
     public void feedback(Element element) {
     }
+
+    @Override
+    public int size() {
+        return size(ElementGroup.DEFAULT_GROUP);
+    }
 }

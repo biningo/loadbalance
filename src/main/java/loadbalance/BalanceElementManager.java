@@ -1,5 +1,7 @@
 package loadbalance;
 
+import java.util.Set;
+
 public interface BalanceElementManager {
 
     /**
@@ -15,6 +17,27 @@ public interface BalanceElementManager {
      * @param element element to be removed from this balancer
      */
     void remove(Element element);
+
+    /**
+     * Get the number of elements
+     *
+     * @return the number of elements
+     */
+    int size();
+
+    /**
+     * Get the number of elements in a group
+     *
+     * @return the number of elements
+     */
+    int size(ElementGroup group);
+
+    /**
+     * Get all groups
+     *
+     * @return all groups
+     */
+    Set<ElementGroup> getGroups();
 
     /**
      * Feedback to the load balancer after the element has been used

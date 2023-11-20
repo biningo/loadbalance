@@ -7,6 +7,7 @@ import loadbalance.NoElementFoundException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,6 +42,16 @@ public class RandomBalancer extends AbstractCommonBalancer {
         if (elements.isEmpty()) {
             elementGroups.remove(group);
         }
+    }
+
+    @Override
+    public int size(ElementGroup group) {
+        return this.elementGroups.get(group).size();
+    }
+
+    @Override
+    public Set<ElementGroup> getGroups() {
+        return this.elementGroups.keySet();
     }
 
     @Override

@@ -12,4 +12,9 @@ public abstract class AbstractKeyBalancer implements KeyBalancer {
     @Override
     public void feedback(Element element) {
     }
+
+    @Override
+    public int size() {
+        return size(ElementGroup.DEFAULT_GROUP);
+    }
 }

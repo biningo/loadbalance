@@ -7,6 +7,7 @@ import loadbalance.impl.AbstractCommonBalancer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,6 +55,16 @@ public class WeightedRandomBalancer extends AbstractCommonBalancer {
             elementGroups.remove(group);
             elementGroupsAndWeight.remove(group);
         }
+    }
+
+    @Override
+    public int size(ElementGroup group) {
+        return this.elementGroups.get(group).size();
+    }
+
+    @Override
+    public Set<ElementGroup> getGroups() {
+        return this.elementGroups.keySet();
     }
 
     @Override
