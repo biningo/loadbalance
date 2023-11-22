@@ -1,66 +1,55 @@
 package loadbalance.impl.memeory;
 
-import loadbalance.impl.AbstractCommonBalancer;
+import loadbalance.CommonBalancer;
 import loadbalance.Element;
-import loadbalance.ElementGroup;
 import loadbalance.NoElementFoundException;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomBalancer extends AbstractCommonBalancer {
-
-    private final Map<ElementGroup, List<Element>> elementGroups = new ConcurrentHashMap<>();
+public class RandomBalancer implements CommonBalancer {
+    private final List<Element> elements = new CopyOnWriteArrayList<>();
 
     @Override
     public void add(Element element) {
-        ElementGroup group = element.getGroup();
-        if (!elementGroups.containsKey(group)) {
-            elementGroups.put(group, new CopyOnWriteArrayList<>());
+        if (this.elements.contains(element)) {
+            return;
         }
-        List<Element> elements = elementGroups.get(group);
-        for (Element ele : elements) {
-            if (ele.equals(element)) {
-                return;
-            }
-        }
-        elements.add(element);
+        this.elements.add(element);
     }
 
     @Override
     public void remove(Element element) {
-        ElementGroup group = element.getGroup();
-        List<Element> elements = elementGroups.get(group);
-        if (elements == null) {
-            return;
-        }
-        elements.remove(element);
-        if (elements.isEmpty()) {
-            elementGroups.remove(group);
-        }
+        this.elements.remove(element);
     }
 
     @Override
-    public int size(ElementGroup group) {
-        return this.elementGroups.get(group).size();
+    public int size() {
+        return this.elements.size();
     }
 
     @Override
-    public Set<ElementGroup> getGroups() {
-        return this.elementGroups.keySet();
+    public void clear() {
+        this.elements.clear();
     }
 
     @Override
-    public Element acquire(ElementGroup group) throws NoElementFoundException {
-        List<Element> elements = elementGroups.get(group);
-        if (elements == null || elements.isEmpty()) {
+    public Element acquire() throws NoElementFoundException {
+        if (this.elements.isEmpty()) {
             throw new NoElementFoundException();
         }
-        int index = ThreadLocalRandom.current().nextInt(0, elements.size());
-        return elements.get(index);
+        int index = ThreadLocalRandom.current().nextInt(0, this.elements.size());
+        return this.elements.get(index);
+    }
+
+    @Override
+    public void feedback(Element element) {
+    }
+
+    @Override
+    public Iterator<Element> iterator() {
+        return this.elements.iterator();
     }
 }

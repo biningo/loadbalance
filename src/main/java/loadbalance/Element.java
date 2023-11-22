@@ -1,10 +1,9 @@
 package loadbalance;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Element {
-
-    private ElementGroup group = ElementGroup.DEFAULT_GROUP;
 
     private String value;
 
@@ -21,31 +20,12 @@ public class Element {
         this.weight = weight;
     }
 
-    public Element(ElementGroup group, String value) {
-        this.value = value;
-        this.group = group;
-    }
-
-    public Element(ElementGroup group, String value, int weight) {
-        this.value = value;
-        this.group = group;
-        this.weight = weight;
-    }
-
     public void setValue(String value) {
         this.value = value;
     }
 
     public String getValue() {
         return value;
-    }
-
-    public ElementGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(ElementGroup group) {
-        this.group = group;
     }
 
     public int getWeight() {
@@ -67,8 +47,8 @@ public class Element {
     @Override
     public String toString() {
         return String.format(
-                "Element{group=%s,value=%s,weight=%s,valid=%s}",
-                group, value, weight, valid
+                "Element{value=%s,weight=%s,valid=%s}",
+                value, weight, valid
         );
     }
 
