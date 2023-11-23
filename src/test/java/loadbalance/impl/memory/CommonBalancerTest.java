@@ -4,14 +4,13 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import loadbalance.*;
 import loadbalance.impl.memeory.RandomBalancer;
 import loadbalance.impl.memeory.WeightedRandomBalancer;
-import loadbalance.impl.memeory.WeightedRoundRobinBalancer;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-public class WeightedOrRandomBalancerTest {
+public class CommonBalancerTest {
     @Test
     public void testAddAndRemove() {
         for (int i = 0; i < 5; i++) {

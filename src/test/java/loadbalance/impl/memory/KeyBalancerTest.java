@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class HashKeyBalancerTest {
+public class KeyBalancerTest {
     @Test
     public void testHashKeyBalancerAcquire() throws NoElementFoundException {
         for (int i = 0; i < 5; i++) {
