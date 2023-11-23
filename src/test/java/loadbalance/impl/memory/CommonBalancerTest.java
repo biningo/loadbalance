@@ -120,8 +120,10 @@ public class CommonBalancerTest {
 
     @Test
     public void testWeightedRandomBalancerAcquire() throws NoElementFoundException {
-        testMutilThreadWeightedRandomBalancerAcquire(1);
-        testMutilThreadWeightedRandomBalancerAcquire(10);
+        for (int i = 0; i < 5; i++) {
+            testMutilThreadWeightedRandomBalancerAcquire(1);
+            testMutilThreadWeightedRandomBalancerAcquire(10);
+        }
     }
 
     public void testMutilThreadWeightedRandomBalancerAcquire(int threadCount) throws NoElementFoundException {
@@ -144,7 +146,7 @@ public class CommonBalancerTest {
                 new ThreadFactoryBuilder().setNameFormat("").build(),
                 new ThreadPoolExecutor.AbortPolicy());
 
-        int totalChoice = 10000;
+        int totalChoice = 50000;
         for (int i = 0; i < totalChoice; i++) {
             executor.execute(() -> {
                 try {
