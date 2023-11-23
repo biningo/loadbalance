@@ -1,10 +1,7 @@
 package loadbalance.impl.memory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import loadbalance.CommonBalancer;
-import loadbalance.Element;
-import loadbalance.NoElementFoundException;
-import loadbalance.ThreadUtil;
+import loadbalance.*;
 import loadbalance.impl.memeory.RandomBalancer;
 import loadbalance.impl.memeory.WeightedRandomBalancer;
 import loadbalance.impl.memeory.WeightedRoundRobinBalancer;
@@ -34,7 +31,7 @@ public class WeightedOrRandomBalancerTest {
         // add and remove
         {
             int size = 10;
-            List<Element> elements = mockElements(size);
+            List<Element> elements = TestUtil.mockElements(size);
             for (Element element : elements) {
                 executor.execute(() -> balancer.add(element));
             }
@@ -68,7 +65,7 @@ public class WeightedOrRandomBalancerTest {
             Assert.assertEquals(0, balancer.size());
 
             int size = 10;
-            for (Element element : mockElements(size)) {
+            for (Element element : TestUtil.mockElements(size)) {
                 balancer.add(element);
             }
             Assert.assertEquals(size, balancer.size());
@@ -89,7 +86,7 @@ public class WeightedOrRandomBalancerTest {
         RandomBalancer balancer = new RandomBalancer();
         Map<Element, Integer> counter = new HashMap<>();
         int size = 10;
-        List<Element> elements = mockElements(size);
+        List<Element> elements = TestUtil.mockElements(size);
         for (Element element : elements) {
             balancer.add(element);
             counter.put(element, 0);
@@ -133,7 +130,7 @@ public class WeightedOrRandomBalancerTest {
         Map<Element, Integer> counter = new ConcurrentHashMap<>();
         int size = 10;
         int totalWeight = 0;
-        List<Element> elements = mockElements(size);
+        List<Element> elements = TestUtil.mockElements(size);
         for (Element element : elements) {
             int weight = ThreadLocalRandom.current().nextInt(1, 101);
             totalWeight += weight;
@@ -168,13 +165,5 @@ public class WeightedOrRandomBalancerTest {
             float rate = count * 100 / (float) totalChoice;
             Assert.assertTrue(Math.abs((float) ele.getWeight() * 100 / totalWeightTmp - rate) <= 1);
         });
-    }
-
-    private List<Element> mockElements(int size) {
-        ArrayList<Element> elements = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            elements.add(new Element("node_" + i));
-        }
-        return elements;
     }
 }
