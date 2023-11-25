@@ -9,7 +9,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class KeyBalancerTest {
     @Test
     public void testHashKeyBalancerAcquire() throws NoElementFoundException {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             testMutilThreadHashKeyBalancerAcquire(1, new HashKeyBalancer());
             testMutilThreadHashKeyBalancerAcquire(10, new HashKeyBalancer());
         }
@@ -35,20 +34,19 @@ public class KeyBalancerTest {
 
         String[] keys = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"};
         for (String key : keys) {
-            ConcurrentHashMap<Element, Object> elementSet = new ConcurrentHashMap<>();
             Element element = balancer.acquire(key);
             for (int i = 0; i < threadCount; i++) {
                 executor.execute(() -> {
                     try {
-                        elementSet.put(balancer.acquire(key), new Object());
+                        if (!element.equals(balancer.acquire(key))) {
+                            Assert.fail();
+                        }
                     } catch (NoElementFoundException e) {
                         throw new RuntimeException(e);
                     }
                 });
             }
             ThreadUtil.waitTasks(executor);
-            Assert.assertEquals(1, elementSet.size());
-            Assert.assertEquals(element, elementSet.keys().nextElement());
         }
     }
 
