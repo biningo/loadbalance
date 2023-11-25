@@ -14,9 +14,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class KeyBalancerTest {
+    public static int TEST_COUNT = 5;
+
     @Test
-    public void testHashKeyBalancerAcquire() throws NoElementFoundException {
-        for (int i = 0; i < 10; i++) {
+    public void testHashKeyBalancer() throws NoElementFoundException {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            testAddAndRemoveByKeyBalancer(new HashKeyBalancer(), 1);
+            testAddAndRemoveByKeyBalancer(new HashKeyBalancer(), 10);
             testMutilThreadHashKeyBalancerAcquire(1, new HashKeyBalancer());
             testMutilThreadHashKeyBalancerAcquire(10, new HashKeyBalancer());
         }
@@ -47,14 +51,6 @@ public class KeyBalancerTest {
                 });
             }
             ThreadUtil.waitTasks(executor);
-        }
-    }
-
-    @Test
-    public void testAddAndRemove() {
-        for (int i = 0; i < 5; i++) {
-            testAddAndRemoveByKeyBalancer(new HashKeyBalancer(), 1);
-            testAddAndRemoveByKeyBalancer(new HashKeyBalancer(), 10);
         }
     }
 

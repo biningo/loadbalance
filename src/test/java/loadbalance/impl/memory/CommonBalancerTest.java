@@ -2,6 +2,7 @@ package loadbalance.impl.memory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import loadbalance.*;
+import loadbalance.impl.memeory.LeastLoadBalancer;
 import loadbalance.impl.memeory.RandomBalancer;
 import loadbalance.impl.memeory.RoundRobinBalancer;
 import loadbalance.impl.memeory.WeightedRandomBalancer;
@@ -12,14 +13,35 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class CommonBalancerTest {
+    public static int TEST_COUNT = 5;
+
     @Test
-    public void testAddAndRemove() {
-        for (int i = 0; i < 5; i++) {
+    public void testRandomBalancer() {
+        for (int i = 0; i < TEST_COUNT; i++) {
             testAddAndRemoveByCommonBalancer(new RandomBalancer(), 1);
-            testAddAndRemoveByCommonBalancer(new WeightedRandomBalancer(), 1);
-            testAddAndRemoveByCommonBalancer(new RoundRobinBalancer(), 1);
             testAddAndRemoveByCommonBalancer(new RandomBalancer(), 10);
+            testMutilThreadRandomBalancerAcquire(1);
+            testMutilThreadRandomBalancerAcquire(10);
+        }
+    }
+
+    @Test
+    public void testWeightedRandomBalancer() throws NoElementFoundException {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            testAddAndRemoveByCommonBalancer(new WeightedRandomBalancer(), 1);
             testAddAndRemoveByCommonBalancer(new WeightedRandomBalancer(), 10);
+            testMutilThreadWeightedRandomBalancerAcquire(1);
+            testMutilThreadWeightedRandomBalancerAcquire(10);
+        }
+    }
+
+    @Test
+    public void testRoundRobinBalancer() throws NoElementFoundException {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            testAddAndRemoveByCommonBalancer(new RoundRobinBalancer(), 1);
+            testAddAndRemoveByCommonBalancer(new RoundRobinBalancer(), 10);
+            testMutilThreadRoundRobinBalancerAcquire(1);
+            testMutilThreadRoundRobinBalancerAcquire(10);
         }
     }
 
@@ -75,14 +97,6 @@ public class CommonBalancerTest {
         }
     }
 
-    @Test
-    public void testRandomBalancerAcquire() {
-        for (int i = 0; i < 5; i++) {
-            testMutilThreadRandomBalancerAcquire(1);
-            testMutilThreadRandomBalancerAcquire(10);
-        }
-    }
-
     public void testMutilThreadRandomBalancerAcquire(int threadCount) {
         RandomBalancer balancer = new RandomBalancer();
         Map<Element, Integer> counter = new HashMap<>();
@@ -118,14 +132,6 @@ public class CommonBalancerTest {
             float rate = count * 100 / (float) totalChoice;
             Assert.assertTrue(Math.abs((float) 100 / elements.size() - rate) <= 1);
         });
-    }
-
-    @Test
-    public void testWeightedRandomBalancerAcquire() throws NoElementFoundException {
-        for (int i = 0; i < 5; i++) {
-            testMutilThreadWeightedRandomBalancerAcquire(1);
-            testMutilThreadWeightedRandomBalancerAcquire(10);
-        }
     }
 
     public void testMutilThreadWeightedRandomBalancerAcquire(int threadCount) throws NoElementFoundException {
@@ -168,14 +174,6 @@ public class CommonBalancerTest {
             float rate = count * 100 / (float) totalChoice;
             Assert.assertTrue(Math.abs((float) ele.getWeight() * 100 / totalWeightTmp - rate) <= 1);
         });
-    }
-
-    @Test
-    public void testRoundRobinBalancerAcquire() throws NoElementFoundException {
-        for (int i = 0; i < 5; i++) {
-            testMutilThreadRoundRobinBalancerAcquire(1);
-            testMutilThreadRoundRobinBalancerAcquire(10);
-        }
     }
 
     public void testMutilThreadRoundRobinBalancerAcquire(int threadCount) throws NoElementFoundException {
