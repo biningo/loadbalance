@@ -45,6 +45,16 @@ public class CommonBalancerTest {
         }
     }
 
+    @Test
+    public void testLeastLoadBalancer() throws NoElementFoundException {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            testAddAndRemoveByCommonBalancer(new LeastLoadBalancer(), 1);
+            testAddAndRemoveByCommonBalancer(new LeastLoadBalancer(), 10);
+            testMutilThreadRoundRobinBalancerAcquire(1);
+            testMutilThreadRoundRobinBalancerAcquire(10);
+        }
+    }
+
     private void testAddAndRemoveByCommonBalancer(CommonBalancer balancer, int threadCount) {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
                 0, TimeUnit.SECONDS,
