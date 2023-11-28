@@ -50,8 +50,8 @@ public class CommonBalancerTest {
         for (int i = 0; i < TEST_COUNT; i++) {
             testAddAndRemoveByCommonBalancer(new LeastLoadBalancer(), 1);
             testAddAndRemoveByCommonBalancer(new LeastLoadBalancer(), 10);
-            testMutilThreadRoundRobinBalancerAcquire(1);
-            testMutilThreadRoundRobinBalancerAcquire(10);
+            testMutilThreadLeastLoadBalancerAcquire(1);
+            testMutilThreadLeastLoadBalancerAcquire(10);
         }
     }
 
@@ -221,5 +221,73 @@ public class CommonBalancerTest {
         counter.forEach((ele, count) -> {
             Assert.assertEquals(eleChoiceCount, (int) count);
         });
+    }
+
+    public void testMutilThreadLeastLoadBalancerAcquire(int threadCount) throws NoElementFoundException {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
+                0, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                new ThreadFactoryBuilder().setNameFormat("").build(),
+                new ThreadPoolExecutor.AbortPolicy());
+
+        CommonBalancer balancer = new LeastLoadBalancer();
+        // test choice count
+        {
+            Map<Element, Integer> counter = new HashMap<>();
+            int size = 10;
+            List<Element> elements = TestUtil.mockElements(size);
+            for (Element element : elements) {
+                balancer.add(element);
+                counter.put(element, 0);
+            }
+
+            int totalChoice = size * 1000;
+            for (int i = 0; i < totalChoice; i++) {
+                executor.execute(() -> {
+                    try {
+                        Element element = balancer.acquire();
+                        synchronized (executor) {
+                            counter.put(element, counter.get(element) + 1);
+                        }
+                    } catch (NoElementFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+            ThreadUtil.waitTasks(executor);
+
+            int eleChoiceCount = totalChoice / size;
+            counter.forEach((ele, count) -> {
+                Assert.assertEquals(eleChoiceCount, (int) count);
+            });
+        }
+
+        // test least load choice
+        {
+            balancer.clear();
+            Element e1 = new Element("e1");
+            balancer.add(e1);
+            for (int i = 0; i < 10; i++) {
+                executor.execute(() -> {
+                    try {
+                        Assert.assertEquals(e1, balancer.acquire());
+                    } catch (NoElementFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+            ThreadUtil.waitTasks(executor);
+            Element e2 = new Element("e2");
+            balancer.add(e2);
+            for (int i = 0; i < 10; i++) {
+                executor.execute(() -> {
+                    try {
+                        Assert.assertEquals(e2, balancer.acquire());
+                    } catch (NoElementFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        }
     }
 }
