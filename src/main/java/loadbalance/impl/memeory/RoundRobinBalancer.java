@@ -4,9 +4,9 @@ import loadbalance.CommonBalancer;
 import loadbalance.Element;
 import loadbalance.NoElementFoundException;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -15,7 +15,7 @@ public class RoundRobinBalancer implements CommonBalancer {
 
     private final ReadWriteLock rwLocker = new ReentrantReadWriteLock();
 
-    private final List<Element> elements = new CopyOnWriteArrayList<>();
+    private final List<Element> elements = new ArrayList<>();
     private final AtomicInteger currentIndex = new AtomicInteger();
 
     @Override
