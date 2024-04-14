@@ -59,7 +59,7 @@ public class HashKeyBalancer implements KeyBalancer {
     }
 
     @Override
-    public Element acquire(String key) throws NoElementFoundException {
+    public Element acquire(Object key) throws NoElementFoundException {
         try {
             this.rwLocker.readLock().lock();
             if (this.elements.isEmpty()) {

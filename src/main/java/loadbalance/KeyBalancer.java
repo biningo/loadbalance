@@ -9,5 +9,5 @@ public interface KeyBalancer extends BalanceElementManager {
      * @return selected element
      * @throws NoElementFoundException if the balancer has no elements
      */
-    Element acquire(String key) throws NoElementFoundException;
+    Element acquire(Object key) throws NoElementFoundException;
 }
