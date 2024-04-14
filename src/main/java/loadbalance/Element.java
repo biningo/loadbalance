@@ -1,6 +1,7 @@
 package loadbalance;
 
-import java.util.ArrayList;
+import com.alibaba.fastjson.JSON;
+
 import java.util.Objects;
 
 public class Element {
@@ -46,10 +47,11 @@ public class Element {
 
     @Override
     public String toString() {
-        return String.format(
-                "Element{value=%s,weight=%s,valid=%s}",
-                value, weight, valid
-        );
+        return JSON.toJSONString(this);
+    }
+
+    public static Element parseFromString(String elementStr) {
+        return JSON.parseObject(elementStr, Element.class);
     }
 
     @Override
